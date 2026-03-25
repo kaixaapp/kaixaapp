@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KaixaApp — Criar sua conta</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+:root{
+  --g:#0CFF44;--k:#080808;--s:#111;--c:#181818;
+  --w:#fff;--t1:rgba(255,255,255,.92);--t2:rgba(255,255,255,.5);--t3:rgba(255,255,255,.25);
+  --red:#FF4444;--f:'Outfit',sans-serif;--r:10px;--rl:16px;
+}
+*,::before,::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--k);color:var(--t1);font-family:var(--f);min-height:100vh;-webkit-font-smoothing:antialiased;
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  background-image:radial-gradient(ellipse at 50% 0%,rgba(12,255,68,.07),transparent 60%)}
+
+.box{background:var(--s);border:1px solid rgba(255,255,255,.07);border-radius:20px;
+  width:100%;max-width:480px;box-shadow:0 32px 80px rgba(0,0,0,.5);overflow:hidden}
+
+/* HEADER */
+.box-header{padding:32px 40px 28px;text-align:center;border-bottom:1px solid rgba(255,255,255,.05)}
+.logo{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:24px}
+.logo svg{height:30px}
+.logo-t{font-size:18px;font-weight:800;letter-spacing:-.3px}
+.logo-t em{color:var(--g);font-style:normal}
+
+.success-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;
+  background:rgba(12,255,68,.08);border:1px solid rgba(12,255,68,.25);border-radius:100px;
+  font-size:13px;font-weight:600;color:var(--g);margin-bottom:20px}
+.success-dot{width:8px;height:8px;border-radius:50%;background:var(--g);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+
+.box-title{font-size:22px;font-weight:800;letter-spacing:-.4px;margin-bottom:8px}
+.box-sub{font-size:14px;color:var(--t2);line-height:1.6}
+
+/* STEPS */
+.steps{display:flex;align-items:center;justify-content:center;gap:0;padding:20px 40px;
+  border-bottom:1px solid rgba(255,255,255,.05)}
+.step{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--t3)}
+.step.active{color:var(--g)}
+.step.done{color:rgba(12,255,68,.6)}
+.step-num{width:22px;height:22px;border-radius:50%;border:1.5px solid currentColor;
+  display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.step.done .step-num{background:rgba(12,255,68,.15)}
+.step-line{width:32px;height:1px;background:rgba(255,255,255,.08);margin:0 4px}
+.step-line.done{background:rgba(12,255,68,.3)}
+
+/* BODY */
+.box-body{padding:32px 40px}
+
+.plan-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;
+  background:rgba(12,255,68,.06);border:1px solid rgba(12,255,68,.18);border-radius:10px;
+  font-size:13px;margin-bottom:24px}
+.plan-chip-name{font-weight:700;color:var(--g)}
+.plan-chip-price{color:var(--t2);font-size:12px}
+
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:12px;font-weight:600;color:var(--t2);margin-bottom:7px;letter-spacing:.02em}
+.form-input{width:100%;padding:13px 16px;background:rgba(255,255,255,.05);
+  border:1.5px solid rgba(255,255,255,.1);border-radius:var(--r);color:var(--w);
+  font-size:14px;font-family:var(--f);outline:none;transition:border-color .2s}
+.form-input:focus{border-color:rgba(12,255,68,.5)}
+.form-input::placeholder{color:var(--t3)}
+.form-input.error{border-color:rgba(255,68,68,.5)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+.pass-strength{margin-top:6px;display:flex;gap:4px;align-items:center}
+.ps-bar{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.08);transition:background .3s}
+.ps-bar.weak{background:var(--red)}
+.ps-bar.medium{background:var(--amber, #F5A623)}
+.ps-bar.strong{background:var(--g)}
+.ps-label{font-size:11px;color:var(--t3);margin-left:6px;min-width:50px}
+
+.error-box{background:rgba(255,68,68,.08);border:1px solid rgba(255,68,68,.2);border-radius:8px;
+  padding:10px 14px;font-size:13px;color:var(--red);margin-bottom:16px;display:none}
+
+.btn-full{width:100%;padding:14px;background:var(--g);border:none;border-radius:var(--r);
+  color:var(--k);font-size:16px;font-weight:700;font-family:var(--f);cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:8px;margin-top:4px}
+.btn-full:hover{background:#fff;box-shadow:0 6px 28px rgba(12,255,68,.3)}
+.btn-full:disabled{opacity:.6;cursor:not-allowed}
+
+.terms{font-size:11.5px;color:var(--t3);text-align:center;margin-top:16px;line-height:1.6}
+.terms a{color:rgba(12,255,68,.7);text-decoration:none}
+
+/* SUCCESS SCREEN */
+#success-screen{display:none;padding:40px;text-align:center}
+.success-ico{font-size:64px;margin-bottom:20px;animation:pop .5s cubic-bezier(.16,1,.3,1)}
+@keyframes pop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.success-title{font-size:24px;font-weight:800;letter-spacing:-.4px;margin-bottom:10px}
+.success-desc{font-size:15px;color:var(--t2);line-height:1.7;margin-bottom:32px}
+.btn-enter{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;
+  background:var(--g);border:none;border-radius:var(--r);color:var(--k);
+  font-size:16px;font-weight:700;font-family:var(--f);cursor:pointer;transition:all .2s;text-decoration:none}
+.btn-enter:hover{background:#fff;box-shadow:0 6px 28px rgba(12,255,68,.3)}
+
+/* LOADER */
+.spin{width:18px;height:18px;border:2px solid rgba(0,0,0,.2);border-top-color:var(--k);
+  border-radius:50%;animation:sp .6s linear infinite;display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* FOOTER */
+.box-footer{padding:16px 40px 28px;text-align:center}
+.trust-row{display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap}
+.trust-item{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--t3)}
+.trust-item svg{color:rgba(12,255,68,.5)}
+
+@media(max-width:520px){
+  .box-header,.box-body,.box-footer{padding-left:24px;padding-right:24px}
+  .form-row{grid-template-columns:1fr}
+  .steps{padding:16px 24px}
+  .box-title{font-size:19px}
+}
+</style>
+</head>
+<body>
+
+<div class="box">
+
+  <!-- HEADER -->
+  <div class="box-header">
+    <div class="logo">
+      <svg viewBox="0 0 505.8 388.49" fill="none"><path fill="#0CFF44" d="M505.8,377.7h-145.91l-84.31-136.89-16.8-27.28c-5.77-9.37-15.98-15.07-26.98-15.07h-16.1l43.13,70.04-66.08,109.2-6.54,10.8-6.64-10.8-67.16-109.04-43.23-70.2-12.77-20.73L0,86.11h146.52l38.51,62.54,16.76-27.69,21.09-34.85L274.1,1.47,274.99,0h146.32l-52.11,86.11-21.3,35.2-34.14,56.41h51.18c11,0,21.22,5.71,26.98,15.07l3.49,5.66,110.39,179.24Z"/></svg>
+      <span class="logo-t">KAIXA<em>.APP</em></span>
+    </div>
+    <div class="success-badge">
+      <div class="success-dot"></div>
+      Pagamento confirmado
+    </div>
+    <div class="box-title">Crie sua conta agora</div>
+    <div class="box-sub">Seu pagamento foi aprovado! Configure seu acesso ao sistema em menos de 1 minuto.</div>
+  </div>
+
+  <!-- STEPS -->
+  <div class="steps">
+    <div class="step done">
+      <div class="step-num">✓</div>
+      <span>Pagamento</span>
+    </div>
+    <div class="step-line done"></div>
+    <div class="step active">
+      <div class="step-num">2</div>
+      <span>Criar conta</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <span>Acessar</span>
+    </div>
+  </div>
+
+  <!-- FORM -->
+  <div class="box-body" id="form-screen">
+    <!-- Plano detectado da URL -->
+    <div class="plan-chip" id="plan-chip">
+      <span>Plano:</span>
+      <span class="plan-chip-name" id="plan-name">KaixaApp Pro</span>
+      <span class="plan-chip-price" id="plan-price">R$ 149/mês</span>
+    </div>
+
+    <div class="error-box" id="err-box"></div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" for="f-name">Seu nome</label>
+        <input class="form-input" type="text" id="f-name" placeholder="Nome completo" autocomplete="name">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="f-company">Empresa</label>
+        <input class="form-input" type="text" id="f-company" placeholder="Nome da empresa">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="f-email">E-mail de acesso</label>
+      <input class="form-input" type="email" id="f-email" placeholder="seu@email.com.br" autocomplete="email">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="f-pass">Crie uma senha</label>
+      <input class="form-input" type="password" id="f-pass" placeholder="Mínimo 6 caracteres" autocomplete="new-password" oninput="checkPass(this.value)">
+      <div class="pass-strength">
+        <div class="ps-bar" id="ps1"></div>
+        <div class="ps-bar" id="ps2"></div>
+        <div class="ps-bar" id="ps3"></div>
+        <span class="ps-label" id="ps-label"></span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="f-pass2">Confirme a senha</label>
+      <input class="form-input" type="password" id="f-pass2" placeholder="Repita a senha" autocomplete="new-password">
+    </div>
+
+    <button class="btn-full" id="create-btn" onclick="createAccount()">
+      Criar minha conta e acessar
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+
+    <p class="terms">
+      Ao criar sua conta você concorda com os
+      <a href="#">Termos de uso</a> e a <a href="#">Política de privacidade</a> do KaixaApp.
+    </p>
+  </div>
+
+  <!-- SUCCESS -->
+  <div id="success-screen">
+    <div class="success-ico">🎉</div>
+    <div class="success-title">Conta criada com sucesso!</div>
+    <div class="success-desc">
+      Seu acesso ao KaixaApp está pronto.<br>
+      Clique abaixo para entrar no sistema.
+    </div>
+    <a href="https://SEU-SISTEMA.vercel.app" id="enter-link" class="btn-enter">
+      Entrar no KaixaApp
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+    <p style="font-size:12px;color:var(--t3);margin-top:20px">Você também receberá um e-mail de confirmação.</p>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="box-footer">
+    <div class="trust-row">
+      <div class="trust-item">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Dados protegidos
+      </div>
+      <div class="trust-item">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Criptografia SSL
+      </div>
+      <div class="trust-item">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Acesso imediato
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const SUPA_URL = 'https://esjwelmmljxczucbdawl.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzandlbG1tbGp4Y3p1Y2JkYXdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MDQzNTQsImV4cCI6MjA4OTk4MDM1NH0.9TckgTMJGe9COJHAVJeh-bIIVgVZ35p2M1Os6I_ytZI';
+const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+/* DETECT PLAN FROM URL */
+const params = new URLSearchParams(window.location.search);
+const planParam = params.get('plano') || 'pro';
+const plans = {
+  starter: { name: 'Starter', price: 'R$ 49/mês' },
+  pro:     { name: 'Pro',     price: 'R$ 149/mês' },
+  business:{ name: 'Business',price: 'R$ 349/mês' },
+};
+const plan = plans[planParam] || plans.pro;
+document.getElementById('plan-name').textContent = plan.name;
+document.getElementById('plan-price').textContent = plan.price;
+
+/* PRE-FILL EMAIL FROM URL (Hotmart passes it) */
+const emailParam = params.get('email') || params.get('buyer_email') || '';
+if(emailParam) document.getElementById('f-email').value = emailParam;
+
+/* PASSWORD STRENGTH */
+function checkPass(val) {
+  const bars = [document.getElementById('ps1'), document.getElementById('ps2'), document.getElementById('ps3')];
+  const label = document.getElementById('ps-label');
+  bars.forEach(b => { b.className = 'ps-bar'; });
+  if(!val) { label.textContent = ''; return; }
+  let score = 0;
+  if(val.length >= 6) score++;
+  if(val.length >= 10) score++;
+  if(/[A-Z]/.test(val) || /[0-9]/.test(val) || /[^A-Za-z0-9]/.test(val)) score++;
+  const levels = ['weak','medium','strong'];
+  const labels = ['Fraca','Média','Forte'];
+  for(let i=0;i<score;i++) bars[i].classList.add(levels[score-1]);
+  label.textContent = labels[score-1] || '';
+  label.style.color = score===1?'var(--red)':score===2?'#F5A623':'var(--g)';
+}
+
+function showError(msg) {
+  const el = document.getElementById('err-box');
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function hideError() { document.getElementById('err-box').style.display = 'none'; }
+
+async function createAccount() {
+  hideError();
+  const name = document.getElementById('f-name').value.trim();
+  const company = document.getElementById('f-company').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+  const pass = document.getElementById('f-pass').value;
+  const pass2 = document.getElementById('f-pass2').value;
+
+  if(!name) { showError('Digite seu nome completo'); document.getElementById('f-name').focus(); return; }
+  if(!email || !email.includes('@')) { showError('Digite um e-mail válido'); document.getElementById('f-email').focus(); return; }
+  if(pass.length < 6) { showError('A senha deve ter pelo menos 6 caracteres'); document.getElementById('f-pass').focus(); return; }
+  if(pass !== pass2) { showError('As senhas não coincidem'); document.getElementById('f-pass2').focus(); return; }
+
+  const btn = document.getElementById('create-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Criando sua conta...';
+
+  const { data, error } = await sb.auth.signUp({ email, password: pass });
+
+  if(error) {
+    btn.disabled = false;
+    btn.innerHTML = 'Criar minha conta e acessar <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+    if(error.message.includes('already registered')) showError('Este e-mail já tem uma conta. Acesse o sistema diretamente.');
+    else showError('Erro ao criar conta: ' + error.message);
+    return;
+  }
+
+  if(data.user) {
+    await sb.from('profiles').insert({
+      id: data.user.id,
+      name,
+      company,
+      plan: planParam,
+    });
+    btn.innerHTML = '✓ Conta criada!';
+    document.getElementById('form-screen').style.display = 'none';
+    document.getElementById('success-screen').style.display = 'block';
+  }
+}
+
+document.addEventListener('keypress', e => { if(e.key === 'Enter') createAccount(); });
+</script>
+</body>
+</html>
