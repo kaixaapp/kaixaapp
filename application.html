@@ -446,8 +446,10 @@ button{cursor:pointer}
 <script>
 const SUPA_URL='https://esjwelmmljxczucbdawl.supabase.co';
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzandlbG1tbGp4Y3p1Y2JkYXdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MDQzNTQsImV4cCI6MjA4OTk4MDM1NH0.9TckgTMJGe9COJHAVJeh-bIIVgVZ35p2M1Os6I_ytZI';
-const sb=supabase.createClient(SUPA_URL,SUPA_KEY);
-const fmt=n=>'R$ '+Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const sb=(window.supabase && window.supabase.createClient)
+  ? window.supabase.createClient(SUPA_URL,SUPA_KEY)
+  : null;
+window.sb = sb;const fmt=n=>'R$ '+Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const fmtDate=d=>{if(!d)return'';const dt=new Date(d+'T00:00:00');return dt.toLocaleDateString('pt-BR')};
 const today=()=>new Date().toISOString().split('T')[0];
 const monthLabel=d=>{const ms=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];const dt=new Date(d+'-01');return ms[dt.getMonth()]};
@@ -932,6 +934,103 @@ if (typeof window.supabase === 'undefined') {
     }
   });
 }
+</script>
+<script>
+window.switchTab = window.switchTab || function(tab){
+  document.querySelectorAll('.ltab').forEach((t,i)=>
+    t.classList.toggle('active',i===(tab==='login'?0:1))
+  );
+  document.getElementById('login-form').style.display = tab==='login' ? 'block' : 'none';
+  document.getElementById('register-form').style.display = tab==='register' ? 'block' : 'none';
+  document.getElementById('auth-error').style.display = 'none';
+};
+
+window.doLogin = window.doLogin || async function(){
+  const email=document.getElementById('l-email').value.trim();
+  const pass=document.getElementById('l-pass').value;
+
+  if(!email||!pass){
+    const el=document.getElementById('auth-error');
+    el.textContent='Preencha e-mail e senha';
+    el.style.display='block';
+    return;
+  }
+
+  if(!window.sb){
+    const el=document.getElementById('auth-error');
+    el.textContent='Supabase não carregou. Abra por servidor local.';
+    el.style.display='block';
+    return;
+  }
+
+  const{data,error}=await window.sb.auth.signInWithPassword({email,password:pass});
+  if(error){
+    const el=document.getElementById('auth-error');
+    el.textContent='E-mail ou senha incorretos';
+    el.style.display='block';
+    return;
+  }
+
+  if(typeof afterLogin==='function'){
+    await afterLogin(data.user);
+  }
+};
+
+window.doRegister = window.doRegister || async function(){
+  const name=document.getElementById('r-name').value.trim();
+  const email=document.getElementById('r-email').value.trim();
+  const pass=document.getElementById('r-pass').value;
+
+  const err=document.getElementById('auth-error');
+
+  if(!name){
+    err.textContent='Digite seu nome';
+    err.style.display='block';
+    return;
+  }
+
+  if(!email||!email.includes('@')){
+    err.textContent='E-mail inválido';
+    err.style.display='block';
+    return;
+  }
+
+  if(pass.length<6){
+    err.textContent='Senha: mínimo 6 caracteres';
+    err.style.display='block';
+    return;
+  }
+
+  if(!window.sb){
+    err.textContent='Supabase não carregou. Abra por servidor local.';
+    err.style.display='block';
+    return;
+  }
+
+  const{data,error}=await window.sb.auth.signUp({email,password:pass});
+
+  if(error){
+    err.textContent='Erro: '+error.message;
+    err.style.display='block';
+    return;
+  }
+
+  if(data.user){
+    window.currentUser=data.user;
+    document.getElementById('ob-name').value=name;
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('onboard-overlay').style.display='flex';
+    if(typeof obStep==='function') obStep(1);
+  }
+};
+
+window.doLogout = window.doLogout || async function(){
+  if(window.sb){
+    await window.sb.auth.signOut();
+  }
+  document.getElementById('app-screen').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+};
 </script>
 </body>
 </html>
