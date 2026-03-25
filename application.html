@@ -883,44 +883,46 @@ function showModal(html){let ov=document.getElementById('gmo');if(!ov){ov=docume
 function closeModal(){const ov=document.getElementById('gmo');if(ov)ov.style.display='none'}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
 document.getElementById('l-pass')?.addEventListener('keypress',e=>{if(e.key==='Enter')doLogin()});
-window.addEventListener('DOMContentLoaded',()=>{
-  // Show login immediately — never block on Supabase
+window.addEventListener('DOMContentLoaded', () => {
   hide('loading-screen');
   show('login-screen');
 
-  // Then quietly check if there's an existing session
-if (!sb) {
-  showAuthError('Supabase não carregou.');
-  return;
-}
-
-Promise.race([
-  sb.auth.getSession(),
-  new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 4000))
-]).then(({ data: { session } }) => {
-  if (session?.user) {
-    currentUser = session.user;
-    return sb
-      .from('profiles')
-      .select('*')
-      .eq('id', session.user.id)
-      .single()
-      .then(({ data: profile }) => {
-        if (profile?.name) {
-          currentProfile = profile;
-          hide('login-screen');
-          launchApp();
-        }
-      });
+  if (!sb) {
+    showAuthError('Supabase não carregou.');
+    return;
   }
-});
-    }
-  }).catch(()=>{
-    // Session check failed or timed out — user stays on login screen
-  });
 
-  sb.auth.onAuthStateChange((event)=>{
-    if(event==='SIGNED_OUT'){hide('app-screen');show('login-screen');}
+  Promise.race([
+    sb.auth.getSession(),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 4000))
+  ])
+    .then(({ data: { session } }) => {
+      if (session?.user) {
+        currentUser = session.user;
+
+        return sb
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single()
+          .then(({ data: profile }) => {
+            if (profile?.name) {
+              currentProfile = profile;
+              hide('login-screen');
+              launchApp();
+            }
+          });
+      }
+    })
+    .catch(() => {
+      // usuário permanece no login
+    });
+
+  sb.auth.onAuthStateChange((event) => {
+    if (event === 'SIGNED_OUT') {
+      hide('app-screen');
+      show('login-screen');
+    }
   });
 });
 window.doLogin = doLogin;
