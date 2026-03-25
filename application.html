@@ -915,7 +915,7 @@ window.addEventListener('DOMContentLoaded', () => {
       }
     })
     .catch(() => {
-      // usuário permanece no login
+      // permanece no login
     });
 
   sb.auth.onAuthStateChange((event) => {
@@ -925,6 +925,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
 window.doLogin = doLogin;
 window.doRegister = doRegister;
 window.doLogout = doLogout;
