@@ -889,19 +889,31 @@ window.addEventListener('DOMContentLoaded',()=>{
   show('login-screen');
 
   // Then quietly check if there's an existing session
-  Promise.race([
-    sb.auth.getSession(),
-    new Promise((_,reject)=>setTimeout(()=>reject(new Error('timeout')),4000))
-  ]).then(({data:{session}})=>{
-    if(session?.user){
-      currentUser=session.user;
-      return sb.from('profiles').select('*').eq('id',session.user.id).single().then(({data:profile})=>{
-        if(profile?.name){
-          currentProfile=profile;
+if (!sb) {
+  showAuthError('Supabase não carregou.');
+  return;
+}
+
+Promise.race([
+  sb.auth.getSession(),
+  new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 4000))
+]).then(({ data: { session } }) => {
+  if (session?.user) {
+    currentUser = session.user;
+    return sb
+      .from('profiles')
+      .select('*')
+      .eq('id', session.user.id)
+      .single()
+      .then(({ data: profile }) => {
+        if (profile?.name) {
+          currentProfile = profile;
           hide('login-screen');
           launchApp();
         }
       });
+  }
+});
     }
   }).catch(()=>{
     // Session check failed or timed out — user stays on login screen
@@ -911,36 +923,9 @@ window.addEventListener('DOMContentLoaded',()=>{
     if(event==='SIGNED_OUT'){hide('app-screen');show('login-screen');}
   });
 });
-</script>
-<script>
-window.switchTab = function(tab){
-  document.querySelectorAll('.ltab').forEach((t,i)=>
-    t.classList.toggle('active',i===(tab==='login'?0:1))
-  );
-  document.getElementById('login-form').style.display = tab==='login' ? 'block' : 'none';
-  document.getElementById('register-form').style.display = tab==='register' ? 'block' : 'none';
-  document.getElementById('auth-error').style.display = 'none';
-}
-
-// evita quebra se supabase não carregar
-if (typeof window.supabase === 'undefined') {
-  window.addEventListener('DOMContentLoaded', function () {
-    var err = document.getElementById('auth-error');
-    var loading = document.getElementById('loading-screen');
-    var login = document.getElementById('login-screen');
-
-    if (loading) loading.style.display = 'none';
-    if (login) login.style.display = 'flex';
-
-    if (err) {
-      err.textContent = 'Erro ao carregar Supabase. Abra com servidor local.';
-      err.style.display = 'block';
-    }
-  });
-}
 window.doLogin = doLogin;
 window.doRegister = doRegister;
-window.logout = doLogout;
+window.doLogout = doLogout;
 window.switchTab = switchTab;
 </script>
 </body>
