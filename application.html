@@ -444,9 +444,15 @@ button{cursor:pointer}
 </div>
 <div class="toast-container" id="toasts"></div>
 <script>
-const SUPA_URL="https://esjwelmmljxczucbdawl.supabase.co";
-const SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzandlbG1tbGp4Y3p1Y2JkYXdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MDQzNTQsImV4cCI6MjA4OTk4MDM1NH0.9TckgTMJGe9COJHAVJeh-bIIVgVZ35p2M1Os6I_ytZI";
-const sb=supabase.createClient(SUPA_URL,SUPA_KEY);
+const SUPA_URL = "https://esjwelmmljxczucbdawl.supabase.co";
+const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzandlbG1tbGp4Y3p1Y2JkYXdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MDQzNTQsImV4cCI6MjA4OTk4MDM1NH0.9TckgTMJGe9COJHAVJeh-bIIVgVZ35p2M1Os6I_ytZI";
+
+// inicialização segura
+const sb = (window.supabase && window.supabase.createClient)
+  ? window.supabase.createClient(SUPA_URL, SUPA_KEY)
+  : null;
+
+window.sb = sb;
 const fmt=n=>'R$ '+Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const fmtDate=d=>{if(!d)return'';const dt=new Date(d+'T00:00:00');return dt.toLocaleDateString('pt-BR')};
 const today=()=>new Date().toISOString().split('T')[0];
@@ -932,6 +938,10 @@ if (typeof window.supabase === 'undefined') {
     }
   });
 }
+window.doLogin = doLogin;
+window.doRegister = doRegister;
+window.doLogout = doLogout;
+window.switchTab = switchTab;
 </script>
 </body>
 </html>
