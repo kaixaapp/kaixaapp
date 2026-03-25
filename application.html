@@ -2,147 +2,412 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>App</title>
 
-  <!-- Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-    body { font-family: Arial; margin: 0; }
-    .hidden { display: none; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 24px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    input, button {
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
+    }
+
+    #auth-error {
+      color: red;
+      display: none;
+    }
   </style>
 </head>
 <body>
   <div id="loading-screen">Carregando...</div>
 
-<div id="login-screen" class="hidden">
-  <h2>Login</h2>
+  <div id="login-screen" class="hidden">
+    <h2>Login</h2>
 
-  <input id="email" placeholder="Email"><br><br>
-  <input id="password" type="password" placeholder="Senha"><br><br>
+    <input id="email" type="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Senha">
 
-  <button onclick="doLogin()">Entrar</button>
-  <button onclick="doRegister()">Cadastrar</button>
+    <button type="button" onclick="doLogin()">Entrar</button>
+    <button type="button" onclick="doRegister()">Cadastrar</button>
 
-  <p id="auth-error" style="color:red; display:none;"></p>
-</div>
-<div id="app-screen" class="hidden">
-  <h2>App carregado 🚀</h2>
-  <button onclick="logout()">Sair</button>
-</div>
-<script>
-const SUPA_URL = "https://esjwelmmljxczu...supabase.co";
-const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzandlbG1tbGp4Y3p1Y2JkYXdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MDQzNTQsImV4cCI6MjA4OTk4MDM1NH0.9TckgTMJGe9COJHAVJeh-bIIVgVZ35p2M1Os6I_ytZI";
+    <p id="auth-error"></p>
+  </div>
 
-let sb = null;
-let currentUser = null;
+  <div id="app-screen" class="hidden">
+    <h2>App carregado</h2>
+    <button type="button" onclick="logout()">Sair</button>
+  </div>
 
-// Inicialização segura
-if (window.supabase && window.supabase.createClient) {
-  sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
-  window.sb = sb;
-} else {
-  console.error("Supabase não carregou");
-}
+  <script>
+    const SUPA_URL = "COLE_A_URL_COMPLETA_AQUI";
+    const SUPA_KEY = "<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>App</title>
 
-// helpers
-function show(id){ document.getElementById(id).classList.remove('hidden'); }
-function hide(id){ document.getElementById(id).classList.add('hidden'); }
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-// init
-window.addEventListener('DOMContentLoaded', async () => {
-  hide('loading-screen');
-  show('login-screen');
-
-  if (!sb) {
-    const err = document.getElementById('auth-error');
-    err.textContent = 'Supabase JS não carregou. Verifique internet/CDN.';
-    err.style.display = 'block';
-    return;
-  }
-
-  try {
-    const { data: { session } } = await sb.auth.getSession();
-
-    if (session?.user) {
-      currentUser = session.user;
-      showApp();
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 24px;
     }
 
-    sb.auth.onAuthStateChange((event) => {
-      if (event === 'SIGNED_OUT') {
-        hide('app-screen');
-        show('login-screen');
+    .hidden {
+      display: none;
+    }
+
+    input, button {
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
+    }
+
+    #auth-error {
+      color: red;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="loading-screen">Carregando...</div>
+
+  <div id="login-screen" class="hidden">
+    <h2>Login</h2>
+
+    <input id="email" type="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Senha">
+
+    <button type="button" onclick="doLogin()">Entrar</button>
+    <button type="button" onclick="doRegister()">Cadastrar</button>
+
+    <p id="auth-error"></p>
+  </div>
+
+  <div id="app-screen" class="hidden">
+    <h2>App carregado</h2>
+    <button type="button" onclick="logout()">Sair</button>
+  </div>
+
+  <script>
+    const SUPA_URL = "https://esjwelmmljxczucbdawl.supabase.co";
+    const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzandlbG1tbGp4Y3p1Y2JkYXdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MDQzNTQsImV4cCI6MjA4OTk4MDM1NH0.9TckgTMJGe9COJHAVJeh-bIIVgVZ35p2M1Os6I_ytZI";
+
+    let sb = null;
+    let currentUser = null;
+
+    function show(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove("hidden");
+    }
+
+    function hide(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add("hidden");
+    }
+
+    function showError(message) {
+      const err = document.getElementById("auth-error");
+      err.textContent = message;
+      err.style.display = "block";
+    }
+
+    function clearError() {
+      const err = document.getElementById("auth-error");
+      err.textContent = "";
+      err.style.display = "none";
+    }
+
+    function showApp() {
+      hide("login-screen");
+      show("app-screen");
+    }
+
+    function showLogin() {
+      hide("app-screen");
+      show("login-screen");
+    }
+
+    try {
+      if (window.supabase && typeof window.supabase.createClient === "function") {
+        sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+        window.sb = sb;
+      } else {
+        console.error("Biblioteca do Supabase não carregou.");
+      }
+    } catch (e) {
+      console.error("Erro ao criar client do Supabase:", e);
+    }
+
+    window.addEventListener("DOMContentLoaded", async function () {
+      hide("loading-screen");
+      show("login-screen");
+
+      if (!sb) {
+        showError("Supabase JS não carregou. Verifique internet, CDN e console.");
+        return;
+      }
+
+      try {
+        const result = await sb.auth.getSession();
+        const session = result?.data?.session;
+
+        if (session && session.user) {
+          currentUser = session.user;
+          showApp();
+        }
+
+        sb.auth.onAuthStateChange(function (event, sessionData) {
+          if (event === "SIGNED_OUT") {
+            currentUser = null;
+            showLogin();
+          }
+
+          if (event === "SIGNED_IN" && sessionData && sessionData.user) {
+            currentUser = sessionData.user;
+            showApp();
+          }
+        });
+      } catch (e) {
+        console.error("Erro ao iniciar:", e);
+        showError("Erro ao iniciar o app. Veja o console.");
       }
     });
 
-  } catch (e) {
-    console.error("Erro ao iniciar:", e);
-  }
-});
-  async function doLogin() {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  const err = document.getElementById('auth-error');
+    async function doLogin() {
+      clearError();
 
-  err.style.display = 'none';
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
 
-  if (!sb) {
-    err.textContent = 'Supabase não carregado';
-    err.style.display = 'block';
-    return;
-  }
+      if (!sb) {
+        showError("Supabase não carregado.");
+        return;
+      }
 
-  const { error } = await sb.auth.signInWithPassword({
-    email,
-    password
-  });
+      try {
+        const { error } = await sb.auth.signInWithPassword({
+          email: email,
+          password: password
+        });
 
-  if (error) {
-    err.textContent = error.message;
-    err.style.display = 'block';
-    return;
-  }
+        if (error) {
+          showError(error.message);
+          return;
+        }
 
-  showApp();
-}
+        showApp();
+      } catch (e) {
+        console.error("Erro no login:", e);
+        showError("Erro inesperado ao fazer login.");
+      }
+    }
 
-async function doRegister() {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  const err = document.getElementById('auth-error');
+    async function doRegister() {
+      clearError();
 
-  err.style.display = 'none';
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
 
-  if (!sb) {
-    err.textContent = 'Supabase não carregado';
-    err.style.display = 'block';
-    return;
-  }
+      if (!sb) {
+        showError("Supabase não carregado.");
+        return;
+      }
 
-  const { error } = await sb.auth.signUp({
-    email,
-    password
-  });
+      try {
+        const { error } = await sb.auth.signUp({
+          email: email,
+          password: password
+        });
 
-  if (error) {
-    err.textContent = error.message;
-    err.style.display = 'block';
-    return;
-  }
+        if (error) {
+          showError(error.message);
+          return;
+        }
 
-  alert("Cadastro feito! Verifique seu email.");
-}
+        alert("Cadastro feito. Verifique seu email.");
+      } catch (e) {
+        console.error("Erro no cadastro:", e);
+        showError("Erro inesperado ao cadastrar.");
+      }
+    }
 
-async function logout() {
-  if (!sb) return;
-  await sb.auth.signOut();
-}
-function showApp() {
-  hide('login-screen');
-  show('app-screen');
-}
-</script>
+    async function logout() {
+      if (!sb) return;
 
+      try {
+        await sb.auth.signOut();
+      } catch (e) {
+        console.error("Erro ao sair:", e);
+      }
+    }
+  </script>
+</body>
+</html>";
+
+    let sb = null;
+    let currentUser = null;
+
+    function show(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove("hidden");
+    }
+
+    function hide(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add("hidden");
+    }
+
+    function showError(message) {
+      const err = document.getElementById("auth-error");
+      err.textContent = message;
+      err.style.display = "block";
+    }
+
+    function clearError() {
+      const err = document.getElementById("auth-error");
+      err.textContent = "";
+      err.style.display = "none";
+    }
+
+    function showApp() {
+      hide("login-screen");
+      show("app-screen");
+    }
+
+    function showLogin() {
+      hide("app-screen");
+      show("login-screen");
+    }
+
+    try {
+      if (window.supabase && typeof window.supabase.createClient === "function") {
+        sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+        window.sb = sb;
+      } else {
+        console.error("Biblioteca do Supabase não carregou.");
+      }
+    } catch (e) {
+      console.error("Erro ao criar client do Supabase:", e);
+    }
+
+    window.addEventListener("DOMContentLoaded", async function () {
+      hide("loading-screen");
+      show("login-screen");
+
+      if (!sb) {
+        showError("Supabase JS não carregou. Verifique internet, CDN e console.");
+        return;
+      }
+
+      try {
+        const result = await sb.auth.getSession();
+        const session = result?.data?.session;
+
+        if (session && session.user) {
+          currentUser = session.user;
+          showApp();
+        }
+
+        sb.auth.onAuthStateChange(function (event, sessionData) {
+          if (event === "SIGNED_OUT") {
+            currentUser = null;
+            showLogin();
+          }
+
+          if (event === "SIGNED_IN" && sessionData && sessionData.user) {
+            currentUser = sessionData.user;
+            showApp();
+          }
+        });
+      } catch (e) {
+        console.error("Erro ao iniciar:", e);
+        showError("Erro ao iniciar o app. Veja o console.");
+      }
+    });
+
+    async function doLogin() {
+      clearError();
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (!sb) {
+        showError("Supabase não carregado.");
+        return;
+      }
+
+      try {
+        const { error } = await sb.auth.signInWithPassword({
+          email: email,
+          password: password
+        });
+
+        if (error) {
+          showError(error.message);
+          return;
+        }
+
+        showApp();
+      } catch (e) {
+        console.error("Erro no login:", e);
+        showError("Erro inesperado ao fazer login.");
+      }
+    }
+
+    async function doRegister() {
+      clearError();
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (!sb) {
+        showError("Supabase não carregado.");
+        return;
+      }
+
+      try {
+        const { error } = await sb.auth.signUp({
+          email: email,
+          password: password
+        });
+
+        if (error) {
+          showError(error.message);
+          return;
+        }
+
+        alert("Cadastro feito. Verifique seu email.");
+      } catch (e) {
+        console.error("Erro no cadastro:", e);
+        showError("Erro inesperado ao cadastrar.");
+      }
+    }
+
+    async function logout() {
+      if (!sb) return;
+
+      try {
+        await sb.auth.signOut();
+      } catch (e) {
+        console.error("Erro ao sair:", e);
+      }
+    }
+  </script>
 </body>
 </html>
