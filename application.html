@@ -906,5 +906,32 @@ window.addEventListener('DOMContentLoaded',()=>{
   });
 });
 </script>
+<script>
+window.switchTab = function(tab){
+  document.querySelectorAll('.ltab').forEach((t,i)=>
+    t.classList.toggle('active',i===(tab==='login'?0:1))
+  );
+  document.getElementById('login-form').style.display = tab==='login' ? 'block' : 'none';
+  document.getElementById('register-form').style.display = tab==='register' ? 'block' : 'none';
+  document.getElementById('auth-error').style.display = 'none';
+}
+
+// evita quebra se supabase não carregar
+if (typeof window.supabase === 'undefined') {
+  window.addEventListener('DOMContentLoaded', function () {
+    var err = document.getElementById('auth-error');
+    var loading = document.getElementById('loading-screen');
+    var login = document.getElementById('login-screen');
+
+    if (loading) loading.style.display = 'none';
+    if (login) login.style.display = 'flex';
+
+    if (err) {
+      err.textContent = 'Erro ao carregar Supabase. Abra com servidor local.';
+      err.style.display = 'block';
+    }
+  });
+}
+</script>
 </body>
 </html>
