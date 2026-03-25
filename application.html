@@ -933,6 +933,18 @@ window.doLogin = doLogin;
 window.doRegister = doRegister;
 window.doLogout = doLogout;
 window.switchTab = switchTab;
+  function switchTab(tab) {
+  const login = document.getElementById('login-form');
+  const register = document.getElementById('register-form');
+
+  if (tab === 'login') {
+    if (login) login.style.display = 'block';
+    if (register) register.style.display = 'none';
+  } else {
+    if (login) login.style.display = 'none';
+    if (register) register.style.display = 'block';
+  }
+}
 </script>
 </body>
 </html>
